@@ -138,18 +138,21 @@ export default function PlayPage() {
 
   if (!address) {
     return (
-      <div className="max-w-xl mx-auto text-center space-y-6 py-16">
-        <h1 className="text-3xl font-black text-on-surface">Masuk dulu, ahli taktik.</h1>
-        <p className="text-on-surface-variant">
-          Sambungkan wallet Sui — itu jadi identitas & namespace memori on-chain kamu. Tanpa wallet, The Bitter Pundit
-          tak punya siapa-siapa untuk ditagih.
-        </p>
-        <div className="flex justify-center">
-          <ConnectButton />
+      <div className="max-w-xl mx-auto py-16">
+        <div className="sticker-card rounded-3xl px-8 py-12 text-center space-y-6">
+          <div className="text-4xl">🎙️⚽</div>
+          <h1 className="text-3xl font-black text-on-surface">Masuk dulu, ahli taktik.</h1>
+          <p className="text-on-surface-variant leading-relaxed">
+            Sambungkan wallet Sui — itu jadi identitas &amp; namespace memori on-chain kamu. Tanpa wallet,
+            The Bitter Pundit tak punya siapa-siapa untuk ditagih.
+          </p>
+          <div className="flex justify-center">
+            <ConnectButton />
+          </div>
+          <Link href="/" className="inline-block text-sm text-secondary hover:underline">
+            ← kembali
+          </Link>
         </div>
-        <Link href="/" className="inline-block text-sm text-secondary hover:underline">
-          ← kembali
-        </Link>
       </div>
     );
   }
