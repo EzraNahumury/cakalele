@@ -5,7 +5,9 @@
   "version": "0.1.0",
   "description": "The Bitter Pundit — agent backend (MemWal thin slice + orchestrator)",
   "scripts": {
-    "test:memory": "node scripts/memory-smoke.mjs"
+    "test:memory": "node scripts/memory-smoke.mjs",
+    "agent:demo": "node scripts/agent-demo.mjs",
+    "serve": "node src/server.mjs"
   },
   "dependencies": {
     "@mysten-incubation/memwal": "0.0.7",

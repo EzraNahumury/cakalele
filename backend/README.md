@@ -45,6 +45,32 @@ ini normal — beri jeda atau retry. `restore(namespace)` me-rebuild index dari 
 **Relayer:** `https://relayer.memory.walrus.xyz` (production, relayer v0.1.0, apiVersion 1.0.0).
 Header `x-delegate-key` deprecated → migrasi ke `x-seal-session` saat relayer naik ke API v2.
 
+## Agent orchestrator
+
+Inti agen ada di `src/`:
+
+| File | Tugas |
+|---|---|
+| `config.mjs` | env + default id (MemWal/pundit mainnet, Ollama, RPC) |
+| `llm.mjs` | Ollama Cloud `/api/chat` (`OLLAMA_*`) |
+| `memory.mjs` | MemWal `recall()` / `remember()` (delegate key) |
+| `onchain.mjs` | baca `PunditProfile` (respect/state) dari Sui mainnet |
+| `persona.mjs` | system prompt dinamis "The Bitter Pundit" per relationship_state + inject memory ter-recall |
+| `agent.mjs` | `respond()` — recall → baca profil → persona → LLM → (opsional) remember |
+| `server.mjs` | HTTP `POST /chat` + `GET /health` (buat frontend) |
+
+Loop tiap turn: `recall(pesan)` dari Walrus → baca respect/state on-chain → bangun persona →
+Ollama balas (mengutip memory verbatim) → opsional `remember()` prediksi baru.
+
+```bash
+npm run agent:demo     # demo 2-turn (read-only; DEMO_STORE=1 utk remember, spend WAL)
+npm run serve          # HTTP agent di :8787  → POST /chat { message, namespace, profileId, storePrediction }
+```
+
+LLM: Ollama Cloud. `qwen3.5-cloud` butuh subscription (403); default dipakai `qwen3-vl:235b-instruct`
+(ubah via `OLLAMA_MODEL`). Demo terbukti: recall 2 memory Walrus + profil on-chain → balasan
+pundit yang mengutip prediksi lama user.
+
 ## Keamanan
 
 - `.env` di-gitignore (root `.gitignore`). Jangan commit `SUI_PRIVATE_KEY`/`MEMWAL_DELEGATE_KEY`.
