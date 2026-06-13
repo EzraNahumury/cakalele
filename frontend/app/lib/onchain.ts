@@ -1,5 +1,8 @@
 // Read pundit on-chain state from Sui mainnet via raw JSON-RPC (version-independent).
+import { Transaction } from "@mysten/sui/transactions";
+
 const RPC = "https://fullnode.mainnet.sui.io:443";
+const CLOCK = "0x6";
 export const PUNDIT_PACKAGE =
   process.env.NEXT_PUBLIC_PUNDIT_PACKAGE_ID ||
   "0xe12154f96dd7b13d999d04f69fb792c48ac9b0d82c8eaf2c42ac113f538d136f";
@@ -55,6 +58,49 @@ export async function getProfileIdForOwner(owner: string): Promise<string | null
   } catch {
     return null;
   }
+}
+
+/** Poll until the registry shows a profile for `owner` (after a create_profile tx). */
+export async function waitForProfileId(owner: string, tries = 10, delayMs = 1500): Promise<string | null> {
+  for (let i = 0; i < tries; i++) {
+    const id = await getProfileIdForOwner(owner);
+    if (id) return id;
+    await new Promise((r) => setTimeout(r, delayMs));
+  }
+  return null;
+}
+
+const enc = (s: string) => Array.from(new TextEncoder().encode(s));
+
+/** Tx: create the caller's PunditProfile (one per wallet). */
+export function buildCreateProfileTx(): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${PUNDIT_PACKAGE}::profile::create_profile`,
+    arguments: [tx.object(PUNDIT_REGISTRY), tx.object(CLOCK)],
+  });
+  return tx;
+}
+
+/** Tx: anchor a prediction receipt (signed by the user). blobId = Walrus blob from remember(). */
+export function buildCommitPredictionTx(
+  profileId: string,
+  matchId: string,
+  blobId: string,
+  confidence: number,
+): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${PUNDIT_PACKAGE}::receipt::commit_prediction`,
+    arguments: [
+      tx.object(profileId),
+      tx.pure.vector("u8", enc(matchId)),
+      tx.pure.vector("u8", enc(blobId)),
+      tx.pure.u8(confidence),
+      tx.object(CLOCK),
+    ],
+  });
+  return tx;
 }
 
 export async function getProfile(profileId: string): Promise<Profile | null> {

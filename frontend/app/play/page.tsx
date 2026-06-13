@@ -2,18 +2,27 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ConnectButton, useCurrentAccount } from "@mysten/dapp-kit";
+import { ConnectButton, useCurrentAccount, useSignAndExecuteTransaction } from "@mysten/dapp-kit";
 import { callAgent, agentHealthy, type RecalledMemory } from "../lib/agent";
 import {
+  buildCommitPredictionTx,
+  buildCreateProfileTx,
   getProfile,
   getProfileIdForOwner,
   getReceipts,
   suiscan,
+  waitForProfileId,
   type Profile,
   type Receipt,
 } from "../lib/onchain";
 
-type ChatMsg = { role: "user" | "agent"; text: string; recalled?: RecalledMemory[]; blob?: string | null };
+type ChatMsg = {
+  role: "user" | "agent";
+  text: string;
+  recalled?: RecalledMemory[];
+  blob?: string | null;
+  note?: string;
+};
 
 const STATE_TONE: Record<string, string> = {
   Skeptis: "bg-surface-container-high text-on-surface",
@@ -26,6 +35,7 @@ const STATE_TONE: Record<string, string> = {
 export default function PlayPage() {
   const account = useCurrentAccount();
   const address = account?.address ?? null;
+  const { mutateAsync: signTx } = useSignAndExecuteTransaction();
 
   const [agentUp, setAgentUp] = useState<boolean | null>(null);
   const [profileId, setProfileId] = useState<string | null>(null);
@@ -34,7 +44,10 @@ export default function PlayPage() {
   const [msgs, setMsgs] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState("");
   const [storePred, setStorePred] = useState(false);
+  const [matchId, setMatchId] = useState("");
+  const [confidence, setConfidence] = useState(1);
   const [sending, setSending] = useState(false);
+  const [status, setStatus] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -80,13 +93,46 @@ export default function PlayPage() {
         content: string;
       }[];
       const out = await callAgent({ message, namespace: address, profileId, storePrediction: storePred, history });
-      setMsgs((m) => [...m, { role: "agent", text: out.reply, recalled: out.recalled, blob: out.rememberedBlobId }]);
-      if (out.rememberedBlobId) loadChain(address);
+
+      // ── Receipt loop: anchor the stored prediction on-chain (user signs) ──
+      const notes: string[] = [];
+      if (storePred && out.rememberedBlobId) {
+        try {
+          let pid = profileId;
+          if (!pid) {
+            setStatus("Buat profil on-chain — tanda tangan di wallet…");
+            const r1 = await signTx({ transaction: buildCreateProfileTx() });
+            notes.push(`profil dibuat (tx ${r1.digest.slice(0, 8)}…)`);
+            pid = await waitForProfileId(address);
+            setProfileId(pid);
+          }
+          if (pid) {
+            setStatus("Anchor receipt on-chain — tanda tangan di wallet…");
+            const mid = matchId.trim() || `PRED-${new Date().toISOString().slice(0, 10)}`;
+            const r2 = await signTx({ transaction: buildCommitPredictionTx(pid, mid, out.rememberedBlobId, confidence) });
+            notes.push(`receipt on-chain (tx ${r2.digest.slice(0, 8)}…)`);
+            await loadChain(address);
+          } else {
+            notes.push("⚠️ profil belum terbaca on-chain, coba lagi sebentar");
+          }
+        } catch (e) {
+          notes.push("⚠️ commit on-chain batal/gagal: " + String((e as Error).message || e).slice(0, 120));
+        } finally {
+          setStatus(null);
+        }
+      }
+
+      setMsgs((m) => [
+        ...m,
+        { role: "agent", text: out.reply, recalled: out.recalled, blob: out.rememberedBlobId, note: notes.join(" · ") || undefined },
+      ]);
+      if (out.rememberedBlobId && !storePred) loadChain(address);
     } catch (e) {
       setErr(String((e as Error).message || e));
       setMsgs((m) => [...m, { role: "agent", text: "⚠️ Agen tak bisa dihubungi. Pastikan backend jalan (`npm run serve`)." }]);
     } finally {
       setSending(false);
+      setStatus(null);
     }
   };
 
@@ -146,32 +192,57 @@ export default function PlayPage() {
                   </div>
                 )}
                 {m.blob && <p className="mt-1 text-[11px] opacity-90">📝 disimpan → blob {m.blob.slice(0, 16)}…</p>}
+                {m.note && <p className="mt-1 text-[11px] opacity-90">⛓️ {m.note}</p>}
               </div>
             </div>
           ))}
           <div ref={endRef} />
         </div>
 
+        {status && <p className="text-xs text-primary pb-1">⏳ {status}</p>}
         {err && <p className="text-xs text-error pb-1">{err}</p>}
-        <div className="flex items-center gap-2 pt-3 border-t border-outline-variant">
-          <label className="flex items-center gap-1.5 text-xs text-on-surface-variant whitespace-nowrap cursor-pointer">
-            <input type="checkbox" checked={storePred} onChange={(e) => setStorePred(e.target.checked)} />
-            simpan prediksi
-          </label>
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && send()}
-            placeholder="Argentina juara, Messi top skor…"
-            className="flex-1 rounded-xl border border-outline-variant bg-surface-container-lowest px-4 py-2.5 text-sm outline-none focus:border-primary"
-          />
-          <button
-            onClick={send}
-            disabled={sending}
-            className="bg-primary text-white rounded-xl px-5 py-2.5 font-bold text-sm disabled:opacity-50 hover:bg-[#003a9e] transition-colors"
-          >
-            {sending ? "…" : "Kirim"}
-          </button>
+        <div className="pt-3 border-t border-outline-variant space-y-2">
+          <div className="flex items-center gap-3 flex-wrap">
+            <label className="flex items-center gap-1.5 text-xs text-on-surface-variant whitespace-nowrap cursor-pointer">
+              <input type="checkbox" checked={storePred} onChange={(e) => setStorePred(e.target.checked)} />
+              simpan prediksi (anchor on-chain)
+            </label>
+            {storePred && (
+              <>
+                <input
+                  value={matchId}
+                  onChange={(e) => setMatchId(e.target.value)}
+                  placeholder="match id (mis. ARG-FRA-2026-06-13)"
+                  className="flex-1 min-w-[140px] rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-1.5 text-xs outline-none focus:border-primary"
+                />
+                <select
+                  value={confidence}
+                  onChange={(e) => setConfidence(Number(e.target.value))}
+                  className="rounded-lg border border-outline-variant bg-surface-container-lowest px-2 py-1.5 text-xs outline-none focus:border-primary"
+                >
+                  <option value={0}>low</option>
+                  <option value={1}>med</option>
+                  <option value={2}>high</option>
+                </select>
+              </>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && send()}
+              placeholder="Argentina juara, Messi top skor…"
+              className="flex-1 rounded-xl border border-outline-variant bg-surface-container-lowest px-4 py-2.5 text-sm outline-none focus:border-primary"
+            />
+            <button
+              onClick={send}
+              disabled={sending}
+              className="bg-primary text-white rounded-xl px-5 py-2.5 font-bold text-sm disabled:opacity-50 hover:bg-[#003a9e] transition-colors"
+            >
+              {sending ? "…" : "Kirim"}
+            </button>
+          </div>
         </div>
       </section>
 
