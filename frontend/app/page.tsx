@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { TeamSticker } from "./components/TeamSticker";
 import { ALL_TEAMS, TEAMS } from "./lib/data";
 
@@ -52,9 +53,9 @@ export default function HomePage() {
             </div>
 
             <div className="flex gap-3 flex-wrap">
-              <a href="#" className="inline-flex items-center gap-2 bg-primary text-white rounded-xl px-7 py-3.5 font-bold hover:scale-105 shadow-lg rotate-1 transition-all active:scale-95">
+              <Link href="/play" className="inline-flex items-center gap-2 bg-primary text-white rounded-xl px-7 py-3.5 font-bold hover:scale-105 shadow-lg rotate-1 transition-all active:scale-95">
                 ⚽ Buat Prediksi
-              </a>
+              </Link>
               <a href="#how" className="inline-flex items-center gap-2 bg-cyan-500 text-white border-2 border-cyan-500 rounded-xl px-7 py-3.5 font-bold hover:bg-cyan-600 hover:border-cyan-600 rotate-[-1deg] transition-all shadow-md">
                 Cara Kerja →
               </a>
@@ -119,9 +120,9 @@ export default function HomePage() {
             <p className="text-blue-100 leading-relaxed">
               Tiap prediksi tersimpan di Walrus. Agen membangun profil otak sepak bolamu lintas sesi — biasmu, streak-mu, take terburukmu. Datang lagi besok, ia tetap ingat.
             </p>
-            <a href="#" className="inline-flex items-center gap-2 rounded-xl bg-secondary-container text-on-secondary-container px-6 py-3 font-bold hover:opacity-90 transition-opacity">
+            <Link href="/play" className="inline-flex items-center gap-2 rounded-xl bg-secondary-container text-on-secondary-container px-6 py-3 font-bold hover:opacity-90 transition-opacity">
               Mulai Prediksi →
-            </a>
+            </Link>
           </div>
           <div className="hidden lg:flex justify-end overflow-hidden">
             <Image src="/imgs/image1.png" alt="Pemain WalCup" width={500} height={340} className="float-delay object-contain" />

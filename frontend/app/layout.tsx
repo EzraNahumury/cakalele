@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { WalletBar } from "./components/WalletBar";
+import { Providers } from "./providers";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -41,12 +43,10 @@ function Header() {
           </nav>
 
           <div className="flex items-center gap-2">
-            <a href="#top" className="hidden sm:inline-flex bg-primary text-white rounded-full px-5 py-2 font-bold text-sm hover:scale-105 transition-all shadow-sm">
+            <Link href="/play" className="hidden sm:inline-flex bg-primary text-white rounded-full px-5 py-2 font-bold text-sm hover:scale-105 transition-all shadow-sm">
               Prediksi
-            </a>
-            <button type="button" className="inline-flex bg-primary text-white rounded-full px-4 py-2 font-bold text-sm hover:bg-[#003a9e] transition-all">
-              Hubungkan Wallet
-            </button>
+            </Link>
+            <WalletBar />
           </div>
         </div>
       </div>
@@ -81,11 +81,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="id" className={plusJakarta.variable} style={{ colorScheme: "light" }}>
       <body className={`${plusJakarta.className} paper-texture text-on-surface`}>
-        <Header />
-        <main id="top" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-          {children}
-        </main>
-        <Footer />
+        <Providers>
+          <Header />
+          <main id="top" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+            {children}
+          </main>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );
