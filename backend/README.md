@@ -71,6 +71,36 @@ LLM: Ollama Cloud. `qwen3.5-cloud` butuh subscription (403); default dipakai `qw
 (ubah via `OLLAMA_MODEL`). Demo terbukti: recall 2 memory Walrus + profil on-chain → balasan
 pundit yang mengutip prediksi lama user.
 
+## Oracle / resolve loop (Respect Arc)
+
+`src/oracle.mjs` (OracleCap holder = signalvault) menutup loop sehingga **memory mengubah
+perilaku**: hasil laga resmi → verdict on-chain → respect_score & relationship_state bergerak →
+persona agent berubah.
+
+| Fungsi | Aksi |
+|---|---|
+| `recordResult(matchId, text)` | simpan hasil ke Walrus → `record_result` (MatchResult on-chain) |
+| `resolvePrediction(profile, receipt, matchResult, verdict)` | validasi receipt (pending + profil cocok) → **dry-run** → `resolve_prediction` |
+| `settle(profile, receipt, matchId, verdict, text)` | record + resolve sekaligus (validasi sebelum record, anti-orphan) |
+
+```bash
+npm run oracle -- settle <profileId> <receiptId> <matchId> <correct|wrong> "<hasil>"
+```
+Guard (dari review): match_id wajib byte-identik dgn receipt, profil = profil pembuat receipt,
+verdict di-dry-run dulu sebelum tx irreversible. Tolerant ke beberapa minor `@mysten/sui` (unwrap defensif).
+
+### ✅ Before/after nyata (Respect Arc) — terbukti di mainnet
+
+`scripts/seed-arc.mjs` (sekali jalan) commit receipt #2 + settle dua receipt CORRECT:
+
+| | respect | state | persona |
+|---|---|---|---|
+| **BEFORE** | 50 | Skeptis | meremehkan / roasting |
+| **AFTER** (2 correct) | 100 | **Oracle** | insecure, mengemis tips, mengutip prediksi lama |
+
+Profil `0x418b…` sekarang `respect=100 state=Oracle correct=2`; 2 receipt = **BENAR** di dashboard.
+Perubahan tone digerakkan murni oleh Respect Score on-chain — bukti "mustahil di Day 1".
+
 ## Keamanan
 
 - `.env` di-gitignore (root `.gitignore`). Jangan commit `SUI_PRIVATE_KEY`/`MEMWAL_DELEGATE_KEY`.
