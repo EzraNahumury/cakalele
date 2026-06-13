@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { TeamSticker } from "./components/TeamSticker";
+import { RedirectIfConnected } from "./components/RedirectIfConnected";
 import { ALL_TEAMS, TEAMS } from "./lib/data";
 
 const STEPS = [
@@ -19,6 +20,7 @@ const MINI_STATS = [
 export default function HomePage() {
   return (
     <div className="space-y-16">
+      <RedirectIfConnected />
 
       {/* ── HERO ─────────────────────────────────────────── */}
       <section className="relative bg-surface-container-low rounded-3xl overflow-hidden border border-outline-variant">
