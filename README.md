@@ -452,7 +452,8 @@ gantt
 | Semua state/memory di Walrus | 🟡 WIP | Append-only + pointer Sui (bukan overwrite) |
 | Before/after (Day 1 vs Day 4+) | 🟡 WIP | Akumulasi riwayat nyata mulai sekarang |
 | Interface publik tempat memory terlihat | 🟡 WIP | Receipt & Respect Dashboard |
-| Wallet khusus Sessions | ⬜ To-do | Buat + isi WAL/SUI |
+| Wallet khusus Sessions | ✅ Done | `signalvault` `0xe7d9…1d11` (WAL+SUI), publisher contract |
+| Trust-anchor contract live (Sui Mainnet) | ✅ Done | `pundit` PACKAGE `0xe121…136f`, build+8/8 test PASS — lihat [smart-contract/deployments.mainnet.md](./smart-contract/deployments.mainnet.md) |
 | Demo video < 3 menit | ⬜ To-do | Struktur cold-open (§14) |
 | Submit Airtable + DeepSurge | ⬜ To-do | + nama, logo, deskripsi, website, repo |
 | Feedback form + GitHub tickets | ⬜ To-do | MemWal beta → bug nyata (jalur Best Feedback) |
@@ -475,7 +476,8 @@ Kami sengaja transparan (klaim berlebihan mengundang serangan saat Q&A):
 
 - **Tim:** _(isi nama tim & anggota)_
 - **Website / Live:** _(isi URL)_
-- **Wallet Sessions:** _(isi address)_
+- **Wallet Sessions:** `0xe7d9532d086478c1e1cc6914e74929814118e4de35ffd8b9a326a0bd8ef91d11` (`signalvault`)
+- **Contract (Sui Mainnet):** PACKAGE `0xe12154f96dd7b13d999d04f69fb792c48ac9b0d82c8eaf2c42ac113f538d136f` — [detail](./smart-contract/deployments.mainnet.md)
 - **Lisensi:** MIT _(atau sesuai pilihan)_
 - **Kontak:** _(isi email / Discord)_
 

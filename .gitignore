@@ -1,0 +1,32 @@
+# ──────────────────────────────────────────────────────────────
+# Secrets / environment — NEVER commit real keys.
+# The Sessions wallet private key & API keys live here at repo root
+# (README §13 setup). Keep only .env.example tracked.
+# ──────────────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Next.js
+.next/
+out/
+.vercel/
+
+# Move build artifacts
+smart-contract/build/
+# Ephemeral local/test publication records
+smart-contract/Pub.*.toml
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

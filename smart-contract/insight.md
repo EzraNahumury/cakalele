@@ -3,6 +3,14 @@
 > Dokumen perencanaan **sebelum eksekusi**. Tujuan: menetapkan lapisan Move on-chain (Sui) apa
 > yang perlu dibangun, kenapa, dan batas scope MVP-nya. Bahasa: Move on Sui Mainnet.
 
+> **UPDATE pasca-audit (14 Jun 2026):** implementasi sudah maju melebihi sketsa di bawah —
+> tanda tangan beberapa fungsi berubah. Lihat [README.md](./README.md) sebagai sumber kebenaran.
+> Hardening yang sudah masuk: **(1)** `ProfileRegistry` shared (anti-Sybil, 1 wallet = 1 profil) →
+> `create_profile(registry, clock)`; **(2)** `resolve_prediction` wajib `&MatchResult` yang cocok
+> (`match_id` sama, `recorded_at_ms >= committed_at_ms`) + catat `resolved_with`; **(3)** `OracleAdminCap`
+> + `mint_oracle_cap` (recovery), `transfer_cap` tolak `@0x0` + emit event; **(4)** `commit_prediction`
+> tolak `match_id`/`blob_id` kosong. Tetap **belum** di-`sui move build`/`test`/publish (CLI belum terpasang).
+
 ---
 
 ## 0. Pertanyaan kunci dulu: apakah kita BUTUH smart contract custom?
@@ -170,7 +178,10 @@ hari** di explorer (Suiscan) → bukti genuine Day 1 vs Day 4.
 2. [x] Modul `profile` — `create_profile`, `record_commit`, `apply_verdict`, respect/state recompute.
 3. [x] Modul `receipt` — `commit_prediction` + event + `resolve_internal`.
 4. [x] Modul `oracle` — `OracleCap`, `record_result`, `resolve_prediction`, `init`.
-5. [x] Tests `tests/pundit_tests.move` (commit→resolve correct, dua wrong→Rival, non-owner abort).
+5. [x] Tests `tests/pundit_tests.move` (commit→resolve correct, dua wrong→Rival, non-owner abort,
+   + pasca-audit: duplicate-profile, empty-blob, match-mismatch, double-resolve, transfer-cap @0x0).
+5b. [x] Hardening keamanan pasca-audit: registry anti-Sybil, MatchResult binding di resolve,
+   OracleAdminCap recovery + transfer_cap guard, validasi anchor non-kosong (lihat UPDATE di atas).
 6. [ ] Pasang Sui CLI → `sui move build` && `sui move test` (CLI belum terpasang di mesin ini).
 7. [ ] **Publish ke Mainnet** → catat `PACKAGE_ID`, `OracleCap` ID.
 8. [ ] Smoke test: commit 1 prediksi dari CLI/script → cek event & object di Suiscan.
