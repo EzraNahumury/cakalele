@@ -54,22 +54,97 @@ function Header() {
   );
 }
 
+const PUNDIT_PACKAGE = "0xe12154f96dd7b13d999d04f69fb792c48ac9b0d82c8eaf2c42ac113f538d136f";
+
+type FooterLink = { label: string; href: string; external?: boolean };
+
+function FooterColumn({ title, links }: { title: string; links: FooterLink[] }) {
+  return (
+    <div>
+      <h3 className="text-xs font-black uppercase tracking-wider text-on-surface mb-4">{title}</h3>
+      <ul className="space-y-2.5">
+        {links.map(({ label, href, external }) => (
+          <li key={label}>
+            {external ? (
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-on-surface-variant hover:text-primary transition-colors"
+              >
+                {label}
+              </a>
+            ) : (
+              <Link href={href} className="text-sm text-on-surface-variant hover:text-primary transition-colors">
+                {label}
+              </Link>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function Footer() {
   return (
-    <footer className="mt-16 border-t border-outline-variant bg-surface-container-low py-8">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <Image src="/logo1.png" alt="WalCup 26" width={90} height={33} className="object-contain opacity-70" />
-          <p className="text-xs text-on-surface-variant text-center">
-            The Bitter Pundit · Powered by{" "}
-            <a href="https://memory.walrus.xyz" className="text-secondary hover:underline" target="_blank" rel="noopener noreferrer">Walrus Memory</a>
-            {" · "}Built for{" "}
-            <a href="https://thewalrussessions.wal.app" className="text-secondary hover:underline" target="_blank" rel="noopener noreferrer">Walrus Sessions 4</a>
+    <footer className="mt-20 border-t border-outline-variant bg-surface-container-low">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
+        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
+          {/* Brand */}
+          <div className="space-y-4">
+            <Image src="/logo1.png" alt="The Bitter Pundit — WalCup 26" width={132} height={48} className="object-contain" />
+            <p className="text-sm text-on-surface-variant leading-relaxed max-w-xs">
+              Agen AI pundit sepak bola yang menyimpan tiap prediksimu sebagai bukti on-chain di Walrus —
+              lalu menagihmu saat meleset. Memori permanen, tak bisa kau hapus.
+            </p>
+            <span className="inline-flex items-center gap-2 rounded-full bg-tertiary text-white px-3 py-1 text-xs font-bold">
+              <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+              Live · Walrus Mainnet
+            </span>
+          </div>
+
+          <FooterColumn
+            title="Produk"
+            links={[
+              { label: "Buat Prediksi", href: "/play" },
+              { label: "Cara Main", href: "/#how" },
+              { label: "Koleksi Stiker", href: "/#stickers" },
+            ]}
+          />
+          <FooterColumn
+            title="Teknologi"
+            links={[
+              { label: "Walrus Memory", href: "https://memory.walrus.xyz", external: true },
+              { label: "Walrus Protocol", href: "https://walrus.xyz", external: true },
+              { label: "Sui Blockchain", href: "https://sui.io", external: true },
+            ]}
+          />
+          <FooterColumn
+            title="Sumber"
+            links={[
+              { label: "GitHub Repo", href: "https://github.com/EzraNahumury/cakalele", external: true },
+              { label: "Smart Contract ↗", href: `https://suiscan.xyz/mainnet/object/${PUNDIT_PACKAGE}`, external: true },
+              { label: "Walrus Sessions 4", href: "https://thewalrussessions.wal.app", external: true },
+            ]}
+          />
+        </div>
+
+        {/* Bottom bar */}
+        <div className="mt-12 pt-6 border-t border-outline-variant flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-xs text-on-surface-variant text-center sm:text-left">
+            © 2026 The Bitter Pundit · Built for Walrus Sessions 4 · MIT License
           </p>
-          <div className="flex gap-3 text-xs text-on-surface-variant">
-            <a href="https://github.com/EzraNahumury/cakalele" className="hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">Docs</a>
-            <span>·</span>
-            <a href="#top" className="hover:text-primary transition-colors">#Walrus</a>
+          <div className="flex items-center gap-4 text-xs">
+            <a
+              href="https://x.com/search?q=%23Walrus"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-bold text-on-surface-variant hover:text-primary transition-colors"
+            >
+              #Walrus on X
+            </a>
+            <span className="text-on-surface-variant">Powered by Walrus Memory 🐋</span>
           </div>
         </div>
       </div>
