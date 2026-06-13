@@ -1,0 +1,14 @@
+[package]
+name = "pundit"
+edition = "2024.beta"
+# The Bitter Pundit — on-chain "trust anchor" layer (commit-reveal receipt + respect score)
+# Lihat insight.md untuk rasional desain.
+
+[dependencies]
+Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/mainnet" }
+
+[addresses]
+pundit = "0x0"
+
+[dev-addresses]
+pundit = "0x0"
