@@ -49,7 +49,7 @@ export default function PlayPage() {
   const [sending, setSending] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
-  const endRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     agentHealthy().then(setAgentUp);
@@ -77,8 +77,10 @@ export default function PlayPage() {
   }, [address, loadChain]);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [msgs]);
+    // scroll only the chat list, not the page
+    const el = listRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [msgs, status]);
 
   const send = async () => {
     const message = input.trim();
@@ -174,7 +176,7 @@ export default function PlayPage() {
           <ConnectButton />
         </div>
 
-        <div className="flex-1 overflow-y-auto py-4 space-y-3">
+        <div ref={listRef} className="flex-1 overflow-y-auto py-4 space-y-3">
           {msgs.length === 0 && (
             <p className="text-sm text-on-surface-variant">
               Lempar prediksimu. Centang <strong>simpan prediksi</strong> agar di-anchor ke Walrus dan bisa ditagih nanti.
@@ -199,7 +201,6 @@ export default function PlayPage() {
               </div>
             </div>
           ))}
-          <div ref={endRef} />
         </div>
 
         {status && <p className="text-xs text-primary pb-1">⏳ {status}</p>}
