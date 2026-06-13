@@ -48,11 +48,30 @@ export type Profile = {
   owner: string;
 };
 
+// ProfileRegistry holds a Table<address,ID>; entries live under the inner Table object's id,
+// not the registry's id. Resolve + cache that table id once.
+let _registryTableId: string | null = null;
+async function registryTableId(): Promise<string | null> {
+  if (_registryTableId) return _registryTableId;
+  try {
+    const res = await rpc<{ data?: { content?: { fields?: { profiles?: { fields?: { id?: { id?: string } } } } } } }>(
+      "sui_getObject",
+      [PUNDIT_REGISTRY, { showContent: true }],
+    );
+    _registryTableId = res?.data?.content?.fields?.profiles?.fields?.id?.id ?? null;
+    return _registryTableId;
+  } catch {
+    return null;
+  }
+}
+
 export async function getProfileIdForOwner(owner: string): Promise<string | null> {
   try {
+    const tableId = await registryTableId();
+    if (!tableId) return null;
     const res = await rpc<{ data?: { content?: { fields?: { value?: string } } } }>(
       "suix_getDynamicFieldObject",
-      [PUNDIT_REGISTRY, { type: "address", value: owner }],
+      [tableId, { type: "address", value: owner }],
     );
     return res?.data?.content?.fields?.value ?? null;
   } catch {
