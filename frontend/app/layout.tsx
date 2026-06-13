@@ -14,7 +14,7 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "WalCup 26 — The Bitter Pundit · Sticker Album & Predictions on Walrus Memory",
+  title: "CAKALELE — The Bitter Pundit · Sticker Album & Predictions on Walrus Memory",
   description:
     "World Cup 2026 prediction arena with an AI agent that remembers everything — your picks, opinions, and biases, stored on-chain via Walrus Memory. Collect stickers, build your album, and watch the agent evolve with you.",
 };
