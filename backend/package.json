@@ -8,7 +8,11 @@
     "test:memory": "node scripts/memory-smoke.mjs",
     "agent:demo": "node scripts/agent-demo.mjs",
     "oracle": "node scripts/oracle.mjs",
-    "serve": "node src/server.mjs"
+    "serve": "node src/server.mjs",
+    "start": "node src/server.mjs"
+  },
+  "engines": {
+    "node": ">=20"
   },
   "dependencies": {
     "@mysten-incubation/memwal": "0.0.7",
