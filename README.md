@@ -1,5 +1,6 @@
-<!-- TODO: ganti placeholder ini dengan logo proyek (assets/logo.png) -->
 <div align="center">
+
+<img src="frontend/public/logo1.png" alt="CAKALELE — The Bitter Pundit" width="150" />
 
 # 🧠⚽ The Bitter Pundit — *The Receipt*
 
@@ -11,9 +12,21 @@
 [![Network](https://img.shields.io/badge/Network-Walrus%20Mainnet-blue)](https://walrus.xyz)
 [![Memory](https://img.shields.io/badge/Memory-MemWal%20(Walrus%20Memory)-7B61FF)](https://docs.wal.app/walrus-memory/getting-started/what-is-walrus-memory)
 [![Chain](https://img.shields.io/badge/Chain-Sui-6FBCF0)](https://sui.io)
-[![Status](https://img.shields.io/badge/Status-WIP%20(Hackathon%20MVP)-orange)]()
+[![Status](https://img.shields.io/badge/Status-LIVE%20on%20Mainnet-2ea44f)](https://cakalele.vercel.app)
+[![Live App](https://img.shields.io/badge/Live%20App-cakalele.vercel.app-000000)](https://cakalele.vercel.app)
 
 </div>
+
+---
+
+## 🔗 Live
+
+| | |
+|---|---|
+| 🎮 **App (live)** | https://cakalele.vercel.app |
+| 🤖 **Agent API** | https://cakalele-production.up.railway.app/health |
+| 📜 **Contract (Suiscan)** | [`pundit` package](https://suiscan.xyz/mainnet/object/0xe12154f96dd7b13d999d04f69fb792c48ac9b0d82c8eaf2c42ac113f538d136f) |
+| 💾 **Repo** | https://github.com/EzraNahumury/cakalele |
 
 ---
 
@@ -374,29 +387,33 @@ Kami memisahkan **entry episodik** (append-only, disimpan permanen) dari **state
 
 ## 13. Setup & Menjalankan
 
-> Status: **WIP** — instruksi final menyusul seiring MVP. Garis besar:
+Monorepo: `frontend/` (Next.js app), `backend/` (agent: MemWal + persona/LLM + oracle), `smart-contract/` (Move).
+**Live:** app di Vercel, agent di Railway, contract di Sui mainnet. Langkah deploy lengkap: [DEPLOY.md](./DEPLOY.md).
 
+### Backend (agent) — port 8787
 ```bash
-# 1. Clone & install
-git clone <repo-url> && cd cakalele
+cd backend
 npm install
-
-# 2. Konfigurasi environment
-cp .env.example .env
-#  - SUI_NETWORK=mainnet
-#  - SESSIONS_WALLET_KEY=...      (wallet khusus Walrus Sessions, terisi WAL + SUI)
-#  - MEMWAL_*=...                  (kredensial MemWal sesuai docs)
-#  - LLM_API_KEY=...
-#  - MATCH_ORACLE_API=...
-
-# 3. Smoke test integrasi memory (thin vertical slice)
-npm run test:memory   # remember() lalu recall() satu objek ke MAINNET, cetak blob_id
-
-# 4. Jalankan
-npm run dev
+cp .env.example .env     # isi SUI_PRIVATE_KEY (Sessions wallet), OLLAMA_KEY, MEMWAL_* — lihat .env.example
+npm run test:memory      # opsional: smoke remember()+recall() ke mainnet, cetak blob_id
+npm run serve            # agent → http://localhost:8787  (GET /health, POST /chat)
 ```
 
-**Prasyarat:** wallet Sui mainnet terisi **WAL** (biaya storage per-epoch) + **SUI** (gas, 2 transaksi per write). Set `epochs` cukup besar agar memory tetap hidup hingga masa penjurian (epoch mainnet = ~2 minggu).
+### Frontend (app) — port 3000
+```bash
+cd frontend
+npm install
+echo "NEXT_PUBLIC_AGENT_URL=http://localhost:8787" > .env.local
+npm run dev              # → http://localhost:3000
+```
+
+### Oracle (resolve hasil laga, butuh OracleCap)
+```bash
+cd backend
+npm run oracle -- settle <profileId> <receiptId> <matchId> <correct|wrong> "<hasil resmi>"
+```
+
+**Prasyarat:** wallet Sui mainnet (Sessions) terisi **WAL** (storage per-epoch) + **SUI** (gas). Smart contract sudah ter-publish — tak perlu re-deploy (lihat [smart-contract/deployments.mainnet.md](./smart-contract/deployments.mainnet.md)).
 
 ---
 
@@ -447,17 +464,18 @@ gantt
 
 | Requirement | Status | Catatan |
 |---|---|---|
-| Live di Walrus **Mainnet** + Walrus Memory | 🟡 WIP | Pakai MemWal SDK asli (`remember`/`recall`) |
-| Genuine persistent memory (mustahil Day 1) | 🟡 WIP | Recall episodik + bukti blob_id on-chain |
-| Semua state/memory di Walrus | 🟡 WIP | Append-only + pointer Sui (bukan overwrite) |
-| Before/after (Day 1 vs Day 4+) | 🟡 WIP | Akumulasi riwayat nyata mulai sekarang |
-| Interface publik tempat memory terlihat | 🟡 WIP | Receipt & Respect Dashboard |
+| Live di Walrus **Mainnet** + Walrus Memory | ✅ Done | MemWal SDK asli (`remember`/`recall`) di mainnet, account `0x5429…ffc24`, relayer `relayer.memory.walrus.xyz` |
+| Genuine persistent memory (mustahil Day 1) | ✅ Done | recall lintas-sesi mengutip prediksi lama user (terverifikasi) |
+| Semua state/memory di Walrus | ✅ Done | blob append-only + receipt on-chain anchor `blob_id` |
+| Before/after (Day 1 vs Day 4+) | ✅ Done | respect **50/Skeptic → 100/Oracle** setelah 2 resolve; persona berubah |
+| Interface publik tempat memory terlihat | ✅ Done | **https://cakalele.vercel.app** — chat + Receipt/Respect dashboard (link Suiscan) |
 | Wallet khusus Sessions | ✅ Done | `signalvault` `0xe7d9…1d11` (WAL+SUI), publisher contract |
 | Trust-anchor contract live (Sui Mainnet) | ✅ Done | `pundit` PACKAGE `0xe121…136f`, build+8/8 test PASS — lihat [smart-contract/deployments.mainnet.md](./smart-contract/deployments.mainnet.md) |
+| Live link (app + agent) | ✅ Done | app Vercel + agent Railway (`/health` 200) |
 | Demo video < 3 menit | ⬜ To-do | Struktur cold-open (§14) |
 | Submit Airtable + DeepSurge | ⬜ To-do | + nama, logo, deskripsi, website, repo |
-| Feedback form + GitHub tickets | ⬜ To-do | MemWal beta → bug nyata (jalur Best Feedback) |
-| Join Discord + post X #Walrus | 🟡 WIP | Share-to-X jadi bagian core loop |
+| Feedback form + GitHub tickets | 🟡 WIP | bug nyata ditemukan: `@mysten/sui` v2 rename client → MemWal pre-alpha break (jalur Best Feedback) |
+| Join Discord + post X #Walrus | 🟡 WIP | Share-to-X bagian core loop |
 
 ---
 
@@ -475,7 +493,7 @@ Kami sengaja transparan (klaim berlebihan mengundang serangan saat Q&A):
 ## 18. Tim, Lisensi & Kontak
 
 - **Tim:** _(isi nama tim & anggota)_
-- **Website / Live:** _(isi URL)_
+- **Website / Live:** **https://cakalele.vercel.app** · Agent API: `https://cakalele-production.up.railway.app`
 - **Wallet Sessions:** `0xe7d9532d086478c1e1cc6914e74929814118e4de35ffd8b9a326a0bd8ef91d11` (`signalvault`)
 - **Contract (Sui Mainnet):** PACKAGE `0xe12154f96dd7b13d999d04f69fb792c48ac9b0d82c8eaf2c42ac113f538d136f` — [detail](./smart-contract/deployments.mainnet.md)
 - **Lisensi:** MIT _(atau sesuai pilihan)_
