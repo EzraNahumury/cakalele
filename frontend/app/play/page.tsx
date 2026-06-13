@@ -32,6 +32,21 @@ const STATE_TONE: Record<string, string> = {
   Oracle: "bg-primary text-white",
 };
 
+function DetailRow({ label, value, href }: { label: string; value: string; href?: string }) {
+  return (
+    <div>
+      <p className="text-[10px] uppercase tracking-wide text-on-surface-variant font-bold">{label}</p>
+      {href ? (
+        <a href={href} target="_blank" rel="noreferrer" className="text-secondary hover:underline break-all">
+          {value} ↗
+        </a>
+      ) : (
+        <p className="text-on-surface break-all">{value}</p>
+      )}
+    </div>
+  );
+}
+
 export default function PlayPage() {
   const account = useCurrentAccount();
   const address = account?.address ?? null;
@@ -41,6 +56,7 @@ export default function PlayPage() {
   const [profileId, setProfileId] = useState<string | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [receipts, setReceipts] = useState<Receipt[]>([]);
+  const [openReceipt, setOpenReceipt] = useState<string | null>(null);
   const [msgs, setMsgs] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState("");
   const [storePred, setStorePred] = useState(false);
@@ -288,33 +304,43 @@ export default function PlayPage() {
           {receipts.length === 0 ? (
             <p className="text-sm text-on-surface-variant">Belum ada receipt prediksi untuk wallet ini.</p>
           ) : (
-            <ul className="space-y-2 max-h-[40vh] overflow-y-auto">
-              {receipts.map((r) => (
-                <li key={r.receiptId} className="rounded-xl border border-outline-variant p-3 text-sm">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-bold text-on-surface truncate">{r.matchId || "(match)"}</span>
-                    <span
-                      className={`pill ${r.verdict === 1 ? "bg-tertiary text-white" : r.verdict === 2 ? "bg-error text-white" : "bg-surface-container-high"}`}
+            <ul className="space-y-2 max-h-[46vh] overflow-y-auto">
+              {receipts.map((r) => {
+                const open = openReceipt === r.receiptId;
+                const verdictPill =
+                  r.verdict === 1 ? "bg-tertiary text-white" : r.verdict === 2 ? "bg-error text-white" : "bg-surface-container-high";
+                const verdictText = r.verdict === 1 ? "Benar" : r.verdict === 2 ? "Salah" : "Pending";
+                const committed = r.committedAtMs ? new Date(r.committedAtMs).toLocaleString("id-ID") : "-";
+                return (
+                  <li key={r.receiptId} className="rounded-xl border border-outline-variant overflow-hidden">
+                    <button
+                      type="button"
+                      onClick={() => setOpenReceipt(open ? null : r.receiptId)}
+                      className="w-full text-left p-3 text-sm hover:bg-surface-container transition-colors"
                     >
-                      {r.verdict === 1 ? "Benar" : r.verdict === 2 ? "Salah" : "Pending"}
-                    </span>
-                  </div>
-                  <p className="text-xs text-on-surface-variant mt-1">
-                    {r.committedAtMs ? new Date(r.committedAtMs).toLocaleString("id-ID") : ""}
-                  </p>
-                  <div className="flex gap-3 text-xs mt-1">
-                    <a className="text-secondary hover:underline" href={suiscan("object", r.receiptId)} target="_blank" rel="noreferrer">
-                      receipt ↗
-                    </a>
-                    <a className="text-secondary hover:underline" href={suiscan("tx", r.txDigest)} target="_blank" rel="noreferrer">
-                      tx ↗
-                    </a>
-                    <span className="text-on-surface-variant truncate" title={r.blobId}>
-                      blob {r.blobId.slice(0, 12)}…
-                    </span>
-                  </div>
-                </li>
-              ))}
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-bold text-on-surface truncate">{r.matchId || "(match)"}</span>
+                        <span className={`pill ${verdictPill}`}>{verdictText}</span>
+                      </div>
+                      <div className="flex items-center justify-between mt-1">
+                        <span className="text-xs text-on-surface-variant">{committed}</span>
+                        <span className="text-xs text-secondary font-bold">{open ? "tutup ▲" : "detail ▼"}</span>
+                      </div>
+                    </button>
+                    {open && (
+                      <div className="px-3 pb-3 pt-2 space-y-2.5 border-t border-outline-variant bg-surface-container-lowest text-xs">
+                        <DetailRow label="Receipt ID" value={r.receiptId} href={suiscan("object", r.receiptId)} />
+                        <DetailRow label="Match" value={r.matchId || "-"} />
+                        <DetailRow label="Status" value={verdictText} />
+                        <DetailRow label="Committed (timestamp on-chain)" value={committed} />
+                        <DetailRow label="Walrus blob (anchor prediksi)" value={r.blobId} href={`https://walruscan.com/mainnet/blob/${r.blobId}`} />
+                        <DetailRow label="Commit tx" value={r.txDigest} href={suiscan("tx", r.txDigest)} />
+                        <DetailRow label="Owner" value={r.owner} href={suiscan("object", r.owner)} />
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>
