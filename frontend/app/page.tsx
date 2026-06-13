@@ -5,16 +5,16 @@ import { RedirectIfConnected } from "./components/RedirectIfConnected";
 import { ALL_TEAMS, TEAMS } from "./lib/data";
 
 const STEPS = [
-  { step: 1, title: "Hubungkan & Koleksi", desc: "Sambungkan wallet Sui. Tiap prediksi memberimu stiker tim untuk album on-chain — seperti Panini, tapi permanen.", tilt: "sticker-tilt-1", bg: "bg-primary text-white" },
-  { step: 2, title: "Prediksi & Simpan", desc: "Pilih pemenang, tebak skor, lempar hot take. Tiap prediksi disimpan ke Walrus Memory — on-chain, selamanya.", tilt: "sticker-tilt-2", bg: "bg-secondary-container text-on-secondary-container" },
-  { step: 3, title: "Agen Berevolusi", desc: "AI mengingat riwayatmu lintas sesi, mendeteksi bias, dan me-roast polamu. Day 1 ≠ Day 5.", tilt: "sticker-tilt-3", bg: "bg-tertiary text-white" },
+  { step: 1, title: "Connect & Collect", desc: "Connect your Sui wallet. Every prediction earns you a team sticker for your on-chain album — like Panini, but permanent.", tilt: "sticker-tilt-1", bg: "bg-primary text-white" },
+  { step: 2, title: "Predict & Save", desc: "Pick winners, guess scores, drop hot takes. Every prediction is saved to Walrus Memory — on-chain, forever.", tilt: "sticker-tilt-2", bg: "bg-secondary-container text-on-secondary-container" },
+  { step: 3, title: "The Agent Evolves", desc: "The AI remembers your history across sessions, detects your biases, and roasts your patterns. Day 1 ≠ Day 5.", tilt: "sticker-tilt-3", bg: "bg-tertiary text-white" },
 ];
 
 const MINI_STATS = [
-  { n: "1.240", label: "Pemain", primary: true },
-  { n: "48", label: "Tim" },
-  { n: "104", label: "Laga" },
-  { n: "∞", label: "Memori" },
+  { n: "1,240", label: "Players", primary: true },
+  { n: "48", label: "Teams" },
+  { n: "104", label: "Matches" },
+  { n: "∞", label: "Memory" },
 ];
 
 export default function HomePage() {
@@ -39,27 +39,27 @@ export default function HomePage() {
           <div className="px-8 py-12 lg:px-12 space-y-6 z-10">
             <div>
               <h1 className="text-4xl lg:text-5xl font-black leading-none tracking-tight text-on-surface">
-                Prediksi.{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-sky-blue">Koleksi.</span>
+                Predict.{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-sky-blue">Collect.</span>
                 <br />
-                Kena Roast.
+                Get Roasted.
                 <span className="block text-base font-semibold text-on-surface-variant mt-1 tracking-normal">
                   powered by Walrus Memory
                 </span>
               </h1>
               <p className="mt-4 text-on-surface-variant text-base leading-relaxed">
-                Arena prediksi Piala Dunia 2026 dengan agen AI yang{" "}
-                <strong className="text-on-surface">mengingat segalanya</strong>. Pick, opini, dan biasmu — tersimpan on-chain lewat{" "}
-                <strong className="text-on-surface">Walrus Memory</strong>. Kumpulkan stiker, bangun albummu. Agen berevolusi mengikutimu.
+                The World Cup 2026 prediction arena with an AI agent that{" "}
+                <strong className="text-on-surface">remembers everything</strong>. Your picks, opinions, and biases — stored on-chain via{" "}
+                <strong className="text-on-surface">Walrus Memory</strong>. Collect stickers, build your album. The agent evolves with you.
               </p>
             </div>
 
             <div className="flex gap-3 flex-wrap">
               <Link href="/play" className="inline-flex items-center gap-2 bg-primary text-white rounded-xl px-7 py-3.5 font-bold hover:scale-105 shadow-lg rotate-1 transition-all active:scale-95">
-                ⚽ Buat Prediksi
+                ⚽ Make a Prediction
               </Link>
               <a href="#how" className="inline-flex items-center gap-2 bg-cyan-500 text-white border-2 border-cyan-500 rounded-xl px-7 py-3.5 font-bold hover:bg-cyan-600 hover:border-cyan-600 rotate-[-1deg] transition-all shadow-md">
-                Cara Kerja →
+                How It Works →
               </a>
             </div>
 
@@ -77,7 +77,7 @@ export default function HomePage() {
 
       {/* ── HOW IT WORKS ─────────────────────────────────── */}
       <section id="how" className="bg-surface-container rounded-3xl p-8 sm:p-12 space-y-6 scroll-mt-24">
-        <h2 className="text-2xl font-black text-on-surface text-center">Cara Mainnya</h2>
+        <h2 className="text-2xl font-black text-on-surface text-center">How It Works</h2>
         <div className="grid sm:grid-cols-3 gap-4">
           {STEPS.map(({ step, title, desc, tilt, bg }) => (
             <div key={step} className={`sticker-card ${tilt} peel-corner rounded-2xl p-6 space-y-3 relative overflow-hidden`}>
@@ -95,8 +95,8 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-white/25 to-white/55" aria-hidden="true" />
         <div className="relative py-10 space-y-6">
           <div className="text-center space-y-1 px-5 sm:px-8">
-            <h2 className="text-2xl font-black text-on-surface">Koleksi Stiker — 48 Tim</h2>
-            <p className="text-sm text-on-surface-variant">Kumpulkan semua tim peserta Piala Dunia 2026 untuk albummu.</p>
+            <h2 className="text-2xl font-black text-on-surface">Sticker Collection — 48 Teams</h2>
+            <p className="text-sm text-on-surface-variant">Collect every team in the World Cup 2026 for your album.</p>
           </div>
 
           <div className="marquee">
@@ -118,16 +118,16 @@ export default function HomePage() {
       <section className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-blue-700 to-blue-900 border border-blue-600">
         <div className="grid lg:grid-cols-2 items-center">
           <div className="px-8 py-10 space-y-4">
-            <h2 className="text-3xl font-black text-white">Memori persisten. On-chain. Selamanya.</h2>
+            <h2 className="text-3xl font-black text-white">Persistent memory. On-chain. Forever.</h2>
             <p className="text-blue-100 leading-relaxed">
-              Tiap prediksi tersimpan di Walrus. Agen membangun profil otak sepak bolamu lintas sesi — biasmu, streak-mu, take terburukmu. Datang lagi besok, ia tetap ingat.
+              Every prediction is stored on Walrus. The agent builds a profile of your football brain across sessions — your biases, your streaks, your worst takes. Come back tomorrow, it still remembers.
             </p>
             <Link href="/play" className="inline-flex items-center gap-2 rounded-xl bg-secondary-container text-on-secondary-container px-6 py-3 font-bold hover:opacity-90 transition-opacity">
-              Mulai Prediksi →
+              Start Predicting →
             </Link>
           </div>
           <div className="hidden lg:flex justify-end overflow-hidden">
-            <Image src="/imgs/image1.png" alt="Pemain WalCup" width={500} height={340} className="float-delay object-contain" />
+            <Image src="/imgs/image1.png" alt="WalCup player" width={500} height={340} className="float-delay object-contain" />
           </div>
         </div>
       </section>

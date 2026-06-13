@@ -3,8 +3,8 @@ import { SUI_RPC } from "./config.mjs";
 
 const client = new SuiJsonRpcClient({ url: SUI_RPC });
 
-// Selaras dgn pundit::profile relationship_state
-export const STATE_NAMES = ["Skeptis", "Rival", "Naik", "Respek", "Oracle"];
+// Mirrors pundit::profile relationship_state
+export const STATE_NAMES = ["Skeptic", "Rival", "Rising", "Respect", "Oracle"];
 
 /** Read a PunditProfile shared object's derived state from Sui mainnet. */
 export async function getProfile(profileId) {

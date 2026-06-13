@@ -10,7 +10,7 @@ export const PUNDIT_REGISTRY =
   process.env.NEXT_PUBLIC_PUNDIT_REGISTRY_ID ||
   "0xc4f4dd4183f14ca23c8a795a39f84cc5177d45f3536e6b9acc586a3d1db6cf73";
 
-export const STATE_NAMES = ["Skeptis", "Rival", "Naik", "Respek", "Oracle"];
+export const STATE_NAMES = ["Skeptic", "Rival", "Rising", "Respect", "Oracle"];
 export const suiscan = (kind: "object" | "tx", id: string) =>
   `https://suiscan.xyz/mainnet/${kind === "tx" ? "tx" : "object"}/${id}`;
 

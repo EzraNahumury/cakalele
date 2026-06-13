@@ -14,15 +14,15 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "WalCup 26 — The Bitter Pundit · Album Stiker & Prediksi di Walrus Memory",
+  title: "WalCup 26 — The Bitter Pundit · Sticker Album & Predictions on Walrus Memory",
   description:
-    "Arena prediksi Piala Dunia 2026 dengan agen AI yang mengingat segalanya — pick, opini, dan biasmu, tersimpan on-chain lewat Walrus Memory. Kumpulkan stiker, bangun album, dan agen berevolusi mengikutimu.",
+    "World Cup 2026 prediction arena with an AI agent that remembers everything — your picks, opinions, and biases, stored on-chain via Walrus Memory. Collect stickers, build your album, and watch the agent evolve with you.",
 };
 
 const NAV: [string, string][] = [
-  ["Beranda", "#top"],
-  ["Cara Main", "#how"],
-  ["Stiker", "#stickers"],
+  ["Home", "#top"],
+  ["How It Works", "#how"],
+  ["Stickers", "#stickers"],
 ];
 
 function Header() {
@@ -44,7 +44,7 @@ function Header() {
 
           <div className="flex items-center gap-2">
             <Link href="/play" className="hidden sm:inline-flex bg-primary text-white rounded-full px-5 py-2 font-bold text-sm hover:scale-105 transition-all shadow-sm">
-              Prediksi
+              Predict
             </Link>
             <WalletBar />
           </div>
@@ -95,8 +95,8 @@ function Footer() {
           <div className="space-y-4">
             <Image src="/logo1.png" alt="The Bitter Pundit — WalCup 26" width={132} height={48} className="object-contain" />
             <p className="text-sm text-on-surface-variant leading-relaxed max-w-xs">
-              Agen AI pundit sepak bola yang menyimpan tiap prediksimu sebagai bukti on-chain di Walrus —
-              lalu menagihmu saat meleset. Memori permanen, tak bisa kau hapus.
+              An arrogant AI football pundit that saves every prediction you make as on-chain proof on Walrus —
+              then holds you to it when you&apos;re wrong. Permanent memory you can&apos;t delete.
             </p>
             <span className="inline-flex items-center gap-2 rounded-full bg-tertiary text-white px-3 py-1 text-xs font-bold">
               <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
@@ -105,15 +105,15 @@ function Footer() {
           </div>
 
           <FooterColumn
-            title="Produk"
+            title="Product"
             links={[
-              { label: "Buat Prediksi", href: "/play" },
-              { label: "Cara Main", href: "/#how" },
-              { label: "Koleksi Stiker", href: "/#stickers" },
+              { label: "Make a Prediction", href: "/play" },
+              { label: "How It Works", href: "/#how" },
+              { label: "Sticker Collection", href: "/#stickers" },
             ]}
           />
           <FooterColumn
-            title="Teknologi"
+            title="Technology"
             links={[
               { label: "Walrus Memory", href: "https://memory.walrus.xyz", external: true },
               { label: "Walrus Protocol", href: "https://walrus.xyz", external: true },
@@ -121,7 +121,7 @@ function Footer() {
             ]}
           />
           <FooterColumn
-            title="Sumber"
+            title="Resources"
             links={[
               { label: "GitHub Repo", href: "https://github.com/EzraNahumury/cakalele", external: true },
               { label: "Smart Contract ↗", href: `https://suiscan.xyz/mainnet/object/${PUNDIT_PACKAGE}`, external: true },
@@ -154,7 +154,7 @@ function Footer() {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id" className={plusJakarta.variable} style={{ colorScheme: "light" }}>
+    <html lang="en" className={plusJakarta.variable} style={{ colorScheme: "light" }}>
       <body className={`${plusJakarta.className} paper-texture text-on-surface`}>
         <Providers>
           <Header />
