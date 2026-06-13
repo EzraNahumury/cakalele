@@ -31,7 +31,7 @@ function Header() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between gap-4">
           <Link href="#top" className="flex items-center gap-2 flex-shrink-0">
-            <Image src="/imgs/logo.png" alt="WalCup 26" width={120} height={44} className="object-contain" priority />
+            <Image src="/logo1.png" alt="WalCup 26" width={120} height={44} className="object-contain" priority />
           </Link>
 
           <nav className="hidden md:flex items-center gap-1 text-sm">
@@ -59,7 +59,7 @@ function Footer() {
     <footer className="mt-16 border-t border-outline-variant bg-surface-container-low py-8">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <Image src="/imgs/logo.png" alt="WalCup 26" width={90} height={33} className="object-contain opacity-70" />
+          <Image src="/logo1.png" alt="WalCup 26" width={90} height={33} className="object-contain opacity-70" />
           <p className="text-xs text-on-surface-variant text-center">
             The Bitter Pundit · Powered by{" "}
             <a href="https://memory.walrus.xyz" className="text-secondary hover:underline" target="_blank" rel="noopener noreferrer">Walrus Memory</a>

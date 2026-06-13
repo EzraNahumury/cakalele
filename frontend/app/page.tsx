@@ -25,7 +25,7 @@ export default function HomePage() {
         <div className="relative grid lg:grid-cols-2 items-center gap-0 min-h-[540px]">
           <div className="relative flex items-center justify-center px-4 py-10 lg:py-4 overflow-hidden">
             <Image
-              src="/imgs/walcup-wal-logo.png"
+              src="/banner1.png"
               alt="WalCup 26"
               width={780}
               height={620}
