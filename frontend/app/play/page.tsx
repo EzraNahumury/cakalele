@@ -116,12 +116,23 @@ export default function PlayPage() {
       const notes: string[] = [];
       if (storePred && out.rememberedBlobId) {
         try {
-          let pid = profileId;
+          // Re-resolve from chain first: local state may lag behind an earlier
+          // create_profile that already landed, which would otherwise abort with
+          // EProfileExists (abort code 1) on a duplicate create.
+          let pid = profileId ?? (await getProfileIdForOwner(address));
           if (!pid) {
             setStatus("Creating on-chain profile — sign in your wallet…");
-            const r1 = await signTx({ transaction: buildCreateProfileTx() });
-            notes.push(`profile created (tx ${r1.digest.slice(0, 8)}…)`);
-            pid = await waitForProfileId(address);
+            try {
+              const r1 = await signTx({ transaction: buildCreateProfileTx() });
+              notes.push(`profile created (tx ${r1.digest.slice(0, 8)}…)`);
+            } catch (e) {
+              // abort code 1 = EProfileExists: a profile already exists on-chain
+              // (e.g. created by a previous attempt). Not a real failure — fall
+              // through to polling for it below.
+              if (!/abort code: 1\b/.test(String((e as Error).message || e))) throw e;
+            }
+            setStatus("Waiting for profile to index on-chain…");
+            pid = await waitForProfileId(address, 30, 2000);
             setProfileId(pid);
           }
           if (pid) {
@@ -131,7 +142,7 @@ export default function PlayPage() {
             notes.push(`receipt on-chain (tx ${r2.digest.slice(0, 8)}…)`);
             await loadChain(address);
           } else {
-            notes.push("⚠️ profile not on-chain yet, try again shortly");
+            notes.push("⚠️ profile not on-chain yet, try again in a moment");
           }
         } catch (e) {
           notes.push("⚠️ on-chain commit cancelled/failed: " + String((e as Error).message || e).slice(0, 120));
