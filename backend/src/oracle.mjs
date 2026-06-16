@@ -180,6 +180,31 @@ export async function autoResolve(profileId, receiptId, ownerAddress) {
   };
 }
 
+/**
+ * Resolve EVERY pending receipt across ALL profiles from real data — no args needed.
+ * Reads each receipt's profile_id + owner from chain, then autoResolve()s it.
+ * Matches without a real result yet stay Pending (retried next run). Cron-friendly.
+ */
+export async function resolveAllPending() {
+  const pending = await listPendingReceipts();
+  const results = [];
+  for (const r of pending) {
+    try {
+      const { fields } = await getReceiptFields(r.receiptId);
+      const profileId = fields?.profile_id;
+      const owner = fields?.owner;
+      if (!profileId) {
+        results.push({ receiptId: r.receiptId, matchId: r.matchId, status: "skip", reason: "no profile_id" });
+        continue;
+      }
+      results.push(await autoResolve(profileId, r.receiptId, owner));
+    } catch (e) {
+      results.push({ receiptId: r.receiptId, matchId: r.matchId, status: "error", reason: String(e?.message || e).slice(0, 120) });
+    }
+  }
+  return results;
+}
+
 /** record_result then resolve_prediction. Validates the receipt BEFORE recording (no orphan MatchResult on a doomed resolve). */
 export async function settle(profileId, receiptId, matchId, verdict, resultText = "official result") {
   const { fields, type } = await getReceiptFields(receiptId);

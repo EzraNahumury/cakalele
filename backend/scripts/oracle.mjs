@@ -5,10 +5,11 @@
  *   npm run oracle -- resolve  <profileId> <receiptId> <matchResultId> <correct|wrong>
  *   npm run oracle -- settle   <profileId> <receiptId> <matchId> <correct|wrong> "<result text>"
  *   npm run oracle -- auto     <profileId> <receiptId> <ownerAddress>   # real result from match oracle
- *   npm run oracle -- auto-all <profileId> <ownerAddress>              # resolve all PENDING from real data
+ *   npm run oracle -- auto-all <profileId> <ownerAddress>              # resolve PENDING for one owner
+ *   npm run oracle -- resolve-all                                      # resolve ALL pending (any owner) — no args, cron-friendly
  *   npm run oracle -- pending  [ownerAddress]                          # list pending receipts
  */
-import { recordResult, resolvePrediction, settle, autoResolve, listPendingReceipts } from "../src/oracle.mjs";
+import { recordResult, resolvePrediction, settle, autoResolve, listPendingReceipts, resolveAllPending } from "../src/oracle.mjs";
 
 const [cmd, ...a] = process.argv.slice(2);
 const out = (o) => console.log(JSON.stringify(o, null, 2));
@@ -16,6 +17,12 @@ const out = (o) => console.log(JSON.stringify(o, null, 2));
 try {
   if (cmd === "pending") {
     out(await listPendingReceipts(a[0]));
+  } else if (cmd === "resolve-all") {
+    const results = await resolveAllPending();
+    for (const r of results) {
+      console.log(`  ${r.matchId || r.receiptId}: ${r.status}${r.verdict ? " → " + r.verdict + " (real " + r.realResult + ")" : r.reason ? " (" + r.reason + ")" : ""}`);
+    }
+    console.log(`resolved ${results.filter((x) => x.status === "resolved").length}/${results.length}`);
   } else if (cmd === "auto") {
     const [profileId, receiptId, ownerAddress] = a;
     if (!profileId || !receiptId) throw new Error("usage: auto <profileId> <receiptId> <ownerAddress>");

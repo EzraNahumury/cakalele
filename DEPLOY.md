@@ -55,6 +55,25 @@ dipakai saat build frontend.
 - Chat → agent balas (badge **online**). Respect/Receipt dashboard keisi dari mainnet.
 - Pakai URL Vercel sebagai **live link** di submission + demo video.
 
+## 4. Auto-resolve hasil laga (oracle)
+
+Receipt Pending di-resolve dari **hasil laga nyata** (TheSportsDB) — bukan dikarang.
+
+**Manual (kapan aja):**
+```bash
+cd backend
+npm run oracle -- resolve-all      # scan SEMUA pending, resolve yang sudah ada hasil real
+```
+
+**Otomatis (Railway Cron):**
+1. Railway → **New → Empty Service** (atau service kedua dari repo yang sama).
+2. **Root Directory:** `backend`, **Start Command:** `npm run oracle -- resolve-all`
+3. **Settings → Cron Schedule:** `0 */6 * * *` (tiap 6 jam) — Railway jalankan command lalu sleep.
+4. **Variables:** sama dengan service backend (paste dari `backend/.env`, butuh `SUI_PRIVATE_KEY`,
+   `OLLAMA_KEY`, `MEMWAL_*`, `PUNDIT_ORACLE_CAP_ID`).
+
+Laga selesai → dalam ≤6 jam auto-resolve → respect + dashboard update sendiri. Match tanpa hasil → tetap Pending (di-retry).
+
 ## Keamanan
 - `SUI_PRIVATE_KEY`, `OLLAMA_KEY`, `MEMWAL_DELEGATE_KEY` HANYA di env host — jangan commit.
 - Pertimbangkan rotate `OLLAMA_KEY` + MemWal delegate key (sempat ke-ekspos saat dev).
