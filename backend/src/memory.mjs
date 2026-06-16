@@ -28,3 +28,18 @@ export async function remember(text, { namespace } = {}) {
   const done = await mem.waitForRememberJob(job.job_id);
   return done.blob_id;
 }
+
+/** Recover a prediction's text from Walrus by its blob_id, searching candidate namespaces. */
+export async function recallTextByBlob(blobId, namespaces = [], hint = "") {
+  for (const ns of namespaces) {
+    if (!ns) continue;
+    try {
+      const res = await recall(hint || "prediction", { namespace: ns, topK: 30 });
+      const hit = (res || []).find((m) => m.blob_id === blobId);
+      if (hit) return hit.text;
+    } catch {
+      /* try next namespace */
+    }
+  }
+  return null;
+}
