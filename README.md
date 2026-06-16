@@ -24,7 +24,7 @@
 | | |
 |---|---|
 | 🎮 **App (live)** | https://cakalele.vercel.app |
-| 🤖 **Agent API** | https://cakalele-production.up.railway.app/health |
+| 🤖 **Agent API** | https://cakalele-production-ab1d.up.railway.app/health |
 | 📜 **Contract (Suiscan)** | [`pundit` package](https://suiscan.xyz/mainnet/object/0xe12154f96dd7b13d999d04f69fb792c48ac9b0d82c8eaf2c42ac113f538d136f) |
 | 💾 **Repo** | https://github.com/EzraNahumury/cakalele |
 
@@ -493,7 +493,7 @@ Kami sengaja transparan (klaim berlebihan mengundang serangan saat Q&A):
 ## 18. Tim, Lisensi & Kontak
 
 - **Tim:** _(isi nama tim & anggota)_
-- **Website / Live:** **https://cakalele.vercel.app** · Agent API: `https://cakalele-production.up.railway.app`
+- **Website / Live:** **https://cakalele.vercel.app** · Agent API: `https://cakalele-production-ab1d.up.railway.app`
 - **Wallet Sessions:** `0xe7d9532d086478c1e1cc6914e74929814118e4de35ffd8b9a326a0bd8ef91d11` (`signalvault`)
 - **Contract (Sui Mainnet):** PACKAGE `0xe12154f96dd7b13d999d04f69fb792c48ac9b0d82c8eaf2c42ac113f538d136f` — [detail](./smart-contract/deployments.mainnet.md)
 - **Lisensi:** MIT _(atau sesuai pilihan)_
