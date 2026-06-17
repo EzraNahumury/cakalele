@@ -5,9 +5,9 @@ export const SUI_RPC = "https://fullnode.mainnet.sui.io:443";
 export const OLLAMA = {
   host: process.env.OLLAMA_HOST || "https://ollama.com",
   key: process.env.OLLAMA_KEY || "",
-  // qwen3.5-cloud requires a paid subscription on this account; qwen3-vl:235b-instruct
-  // is accessible and clean. Override via OLLAMA_MODEL.
-  model: process.env.OLLAMA_MODEL || "qwen3-vl:235b-instruct",
+  // Cloud models retire/gate over time. gpt-oss:120b is free + capable; llm.mjs
+  // auto-falls-back if a configured model is retired. Override via OLLAMA_MODEL.
+  model: process.env.OLLAMA_MODEL || "gpt-oss:120b",
 };
 
 export const MEMWAL = {
