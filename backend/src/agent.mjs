@@ -1,6 +1,6 @@
 import { chat } from "./llm.mjs";
 import { recall, remember } from "./memory.mjs";
-import { getProfile } from "./onchain.mjs";
+import { getProfile, getReceipts } from "./onchain.mjs";
 import { buildSystemPrompt } from "./persona.mjs";
 
 const DEFAULT_PROFILE = { state: 0, respect: 50, correct: 0, wrong: 0, stateName: "Skeptis" };
@@ -25,7 +25,20 @@ export async function respond({ userMessage, namespace, profileId, storePredicti
     try { profile = await getProfile(profileId); } catch { /* keep default on read failure */ }
   }
 
-  const system = buildSystemPrompt({ ...profile, memories });
+  // Annotate recalled memories with their on-chain verdict (join by blob_id) so the
+  // agent knows which predictions already RESOLVED Correct/Wrong vs still pending.
+  let annotated = memories;
+  try {
+    if (profile.owner) {
+      const byBlob = new Map((await getReceipts(profile.owner)).map((r) => [r.blobId, r]));
+      annotated = memories.map((m) => {
+        const r = byBlob.get(m.blob_id);
+        return r ? { ...m, verdict: r.verdict, matchId: r.matchId } : m;
+      });
+    }
+  } catch { /* annotation is best-effort */ }
+
+  const system = buildSystemPrompt({ ...profile, memories: annotated });
   const messages = [
     { role: "system", content: system },
     ...history,
@@ -38,5 +51,5 @@ export async function respond({ userMessage, namespace, profileId, storePredicti
     try { rememberedBlobId = await remember(userMessage, { namespace }); } catch { /* non-fatal */ }
   }
 
-  return { reply, profile, recalled: memories, rememberedBlobId };
+  return { reply, profile, recalled: annotated, rememberedBlobId };
 }
