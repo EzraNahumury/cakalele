@@ -24,7 +24,7 @@
 | | |
 |---|---|
 | 🎮 **App (live)** | https://cakalele.vercel.app |
-| 🤖 **Agent API** | https://cakalele-production-b226.up.railway.app/health |
+| 🤖 **Agent API** | https://cakalelefix-production.up.railway.app/health |
 | 📜 **Contract (Suiscan)** | [`pundit` package](https://suiscan.xyz/mainnet/object/0xe12154f96dd7b13d999d04f69fb792c48ac9b0d82c8eaf2c42ac113f538d136f) |
 | 💾 **Repo** | https://github.com/EzraNahumury/cakalele |
 
@@ -214,7 +214,7 @@ Deliberately transparent (overclaiming invites attack during Q&A):
 ## 10. Team, License & Contact
 
 - **Team:** _(fill in team name & members)_
-- **Website / Live:** **https://cakalele.vercel.app** · Agent API: `https://cakalele-production-b226.up.railway.app`
+- **Website / Live:** **https://cakalele.vercel.app** · Agent API: `https://cakalelefix-production.up.railway.app`
 - **Sessions wallet:** `0xe7d9532d086478c1e1cc6914e74929814118e4de35ffd8b9a326a0bd8ef91d11` (`signalvault`)
 - **Contract (Sui Mainnet):** package `0xe12154f96dd7b13d999d04f69fb792c48ac9b0d82c8eaf2c42ac113f538d136f` — [details](./smart-contract/deployments.mainnet.md)
 - **License:** MIT
